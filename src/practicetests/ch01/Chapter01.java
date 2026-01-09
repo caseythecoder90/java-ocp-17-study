@@ -1,5 +1,11 @@
 package practicetests.ch01;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 public class Chapter01 {
 
     // text blocks
@@ -20,7 +26,19 @@ public class Chapter01 {
         var dinner = ++time >= 10 ? day-- <= 2
                 ? "Takeout" : "Salad" : "Leftovers";
         System.out.println((1+1)*(1+2));
+        List<String> cats = new ArrayList<>();
+        cats.add("leo");
+        cats.add("Olivia");
+        cats.sort((c1, c2) -> -c2.compareTo(c1));
+        Collections.reverse(cats);
+        System.out.println(cats);
 
+        Consumer<String> supplier = (var s) -> System.out.println(s);
+
+        Integer data = 5; // cannot do this below
+//        if (data instanceof Integer num) {
+//
+//        }
     }
 
     // which data types does switch statement allow?

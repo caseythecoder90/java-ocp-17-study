@@ -132,6 +132,45 @@ Topics covered:
 - Getting table and column details
 - Dynamic result processing
 
+### Example 7: execute() Method
+```bash
+mvn compile exec:java -Dexec.mainClass="jdbc.Example07_ExecuteMethod"
+```
+
+Topics covered:
+- execute() method returning boolean
+- Checking if result is ResultSet or update count
+- getResultSet() and getUpdateCount() methods
+- Handling unknown SQL types at runtime
+- Difference between execute(), executeQuery(), and executeUpdate()
+
+### Example 8: CallableStatement
+First, load the stored procedures into the database:
+
+**PowerShell:**
+```powershell
+Get-Content stored-procedures.sql | docker exec -i jdbc-practice-db psql -U ocpuser -d ocp_practice
+```
+
+**Bash/Git Bash:**
+```bash
+docker exec -i jdbc-practice-db psql -U ocpuser -d ocp_practice < stored-procedures.sql
+```
+
+Then run the example:
+```bash
+mvn compile exec:java -Dexec.mainClass="jdbc.Example08_CallableStatement"
+```
+
+Topics covered:
+- CallableStatement for calling stored procedures/functions
+- Functions with NO parameters
+- IN parameters only
+- OUT parameters
+- INOUT parameters (same parameter used for input and output)
+- Mixed IN and OUT parameters
+- Syntax patterns: {? = call func()} vs {call proc(?)}
+
 ## Running from IntelliJ IDEA
 
 1. Navigate to the example file (e.g., `Example01_BasicConnection.java`)
