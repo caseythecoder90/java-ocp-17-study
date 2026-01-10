@@ -8,17 +8,6 @@ public class Example {
 class Ostrich {
     private String color;
 
-    public static void main(String[] args) {
-        Ostrich ostrich = new Ostrich();
-        System.out.println(ostrich.color);
-        double key = (int)5f;
-        long note = (char)(byte)key++;
-        double song = note % 2;
-        System.out.print(key+", "+note+", "+song);
-
-
-
-    }
 }
 
 

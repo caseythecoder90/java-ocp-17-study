@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(javac:*)",
+      "Bash(java:*)",
+      "Bash(find:*)"
+    ]
+  }
+}
