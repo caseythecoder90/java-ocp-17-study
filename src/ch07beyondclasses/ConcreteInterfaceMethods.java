@@ -227,9 +227,13 @@ interface PrivateMethodInterface {
     }
 
     // Static method can call private static (but NOT private instance)
-    static void staticPublicMethod() {
+    public static void staticPublicMethod() {
         System.out.println(privateStaticHelper());  // ✓ Works
         // System.out.println(privateHelper());  // ✗ DOES NOT COMPILE - static cannot call instance
+    }
+
+    static void staticPublicMethod2() {
+        System.out.println(privateStaticHelper());
     }
 }
 
@@ -320,6 +324,7 @@ interface ChildInterface extends ParentInterface {
     default void defaultMethod() {  // Can override default methods
         System.out.println("Child default");
         ParentInterface.super.defaultMethod();  // Can call parent's default
+        System.out.println(CONSTANT); // Can access the public static final variable.
     }
 
     // Cannot call ParentInterface.staticMethod() without interface name
@@ -339,6 +344,11 @@ class ImplementingClass implements ParentInterface {
     public void useStatic() {
         ParentInterface.staticMethod();  // ✓ Must use interface name
         // staticMethod();  // ✗ Not inherited
+        System.out.println(ParentInterface.CONSTANT);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(ParentInterface.CONSTANT);
     }
 }
 

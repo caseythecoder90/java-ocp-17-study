@@ -71,7 +71,7 @@ package ch03controlflow;
  *
  * ALLOWED:
  * - Literals: case 1:  case 'A':  case "hello":
- * - Enum constants: case Color.RED:
+ * - Enum constants: case RED:
  * - Final constant variables: final int MAX = 10;  case MAX:
  *
  * NOT ALLOWED:

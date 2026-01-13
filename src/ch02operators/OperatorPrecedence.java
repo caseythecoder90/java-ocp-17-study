@@ -71,7 +71,7 @@ package ch02operators;
 ///   17     | Arrow operator             | ->                 | Right-to-left
 ///
 /// ═══════════════════════════════════════════════════════════════════════════
-/// MEMORY TRICK: "Please Pray Over Code, My Damn Shifts Really Equal Logic
+/// MEMORY TRICK: "Please Pray Over Code, My Shifts Really Equal Logic
 ///                And eXclusive ORs Convince Coders To Always Remember"
 /// ═══════════════════════════════════════════════════════════════════════════
 /// P - Post-unary
@@ -84,7 +84,6 @@ package ch02operators;
 ///
 /// M - Multiplication/Division/Modulus
 ///
-/// D - (covered above)
 ///
 /// S - Shift
 ///

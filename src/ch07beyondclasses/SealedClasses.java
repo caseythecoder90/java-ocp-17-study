@@ -118,14 +118,14 @@ public class SealedClasses {
 // BASIC SEALED CLASS - With permits clause
 // ═══════════════════════════════════════════════════════════════════════════
 
-sealed class AnimalSealed permits Cat, Dog {
+sealed class Animal permits Cat, Dog {
     String makeSound() {
         return "Generic animal sound";
     }
 }
 
 // Permitted subclass 1: sealed (further restricted)
-sealed class Cat extends AnimalSealed permits BengalCat {
+sealed class Cat extends Animal permits BengalCat {
     @Override
     String makeSound() {
         return "Meow";
@@ -133,7 +133,7 @@ sealed class Cat extends AnimalSealed permits BengalCat {
 }
 
 // Permitted subclass 2: non-sealed (can be extended by anyone)
-non-sealed class Dog extends AnimalSealed {
+non-sealed class Dog extends Animal {
     @Override
     String makeSound() {
         return "Woof";

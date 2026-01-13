@@ -130,7 +130,7 @@ public class Enums {
         // Default implementation with override
         // ────────────────────────────────────────────────────────────────────
         System.out.println("\nDefault with override:");
-        for (AnimalSealed a : AnimalSealed.values()) {
+        for (AnimalSound a : AnimalSound.values()) {
             System.out.println(a + ": " + a.getSound());
         }
 
@@ -279,7 +279,7 @@ enum Operation {
 // DEFAULT IMPLEMENTATION WITH OVERRIDE
 // ═══════════════════════════════════════════════════════════════════════════
 
-enum Animal {
+enum AnimalSound {
     DOG,
     CAT,
     BIRD {
