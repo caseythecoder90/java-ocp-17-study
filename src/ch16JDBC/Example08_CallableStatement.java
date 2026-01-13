@@ -1,9 +1,8 @@
-package jdbc;
+package ch16JDBC;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  * OCP JDBC Practice: CallableStatement for Stored Procedures
