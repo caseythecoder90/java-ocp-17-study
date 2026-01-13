@@ -1,7 +1,5 @@
 package ch07beyondclasses;
 
-import java.util.Objects;
-
 /**
  * ENCAPSULATION AND RECORDS - OCP Java 17 Exam
  *
