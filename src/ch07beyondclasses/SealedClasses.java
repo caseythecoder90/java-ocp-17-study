@@ -189,7 +189,7 @@ final class Rectangle extends Shape {
 // NESTED SUBCLASSES - Dot notation in permits
 // ═══════════════════════════════════════════════════════════════════════════
 
-sealed class Vehicle permits Vehicle.Car, Vehicle.Truck {
+sealed class Vehicle permits Vehicle.Car, Vehicle.Truck, Vehicle.SUV {
     int getWheels() {
         return 0;
     }
@@ -207,6 +207,39 @@ sealed class Vehicle permits Vehicle.Car, Vehicle.Truck {
         @Override
         int getWheels() {
             return 18;
+        }
+    }
+
+    sealed static class SUV extends Vehicle permits SUV.Escalade, SUV.Tacoma {
+        @Override
+        int getWheels() {
+            System.out.println("All Wheel Drive");
+            return 5;
+        }
+
+        static final class Escalade extends SUV {
+
+            void printCommonDriver() {
+                System.out.println("Soccer mom and dad!");
+            }
+
+        }
+
+        static non-sealed class Tacoma extends SUV {
+
+            void printCommonDriver() {
+                System.out.println("National Park traveler!");
+            }
+
+            public static void main(String[] args) {
+                SUV suv = new SUV();
+                Vehicle.SUV.Escalade escalade = new Escalade();
+                escalade.printCommonDriver();
+                Vehicle.SUV.Tacoma tacoma = new Tacoma();
+
+
+            }
+
         }
     }
 }

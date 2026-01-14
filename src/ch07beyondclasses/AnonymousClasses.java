@@ -45,6 +45,9 @@ public class AnonymousClasses {
         };
 
         formalGreeting.greet("Bob");
+
+        // Compare with lambda expressions
+        Greeting greetingLambda = name -> System.out.println("Hello there, " + name);
     }
 
     // ===== ANONYMOUS CLASS IMPLEMENTING RUNNABLE =====

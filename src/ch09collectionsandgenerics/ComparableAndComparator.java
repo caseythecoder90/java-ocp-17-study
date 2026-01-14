@@ -1,6 +1,8 @@
 package ch09collectionsandgenerics;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Comparable vs Comparator
@@ -154,8 +156,9 @@ public class ComparableAndComparator {
         animals.add(new Animal("Horse", 10, 450.0));
 
         // comparing() - extracts Comparable field (String, Integer, etc.)
-        Comparator<Animal> byName = Comparator.comparing(Animal::getName);
-        Collections.sort(animals, byName);
+        Function<Animal, String> function = Animal::getName;
+        Comparator<Animal> byName = Comparator.comparing(function);
+        animals.sort(byName);
         System.out.println("comparing(getName): " + animals);
 
         // comparingInt() - extracts int primitive
@@ -164,7 +167,8 @@ public class ComparableAndComparator {
         System.out.println("comparingInt(getAge): " + animals);
 
         // comparingDouble() - extracts double primitive
-        Comparator<Animal> byWeight = Comparator.comparingDouble(Animal::getWeight);
+        ToDoubleFunction<Animal> toDoubleFunction = Animal::getWeight;
+        Comparator<Animal> byWeight = Comparator.comparingDouble(toDoubleFunction);
         Collections.sort(animals, byWeight);
         System.out.println("comparingDouble(getWeight): " + animals);
 

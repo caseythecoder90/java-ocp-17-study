@@ -1,7 +1,5 @@
 package ch08lambdasandfunctionalinterfaces;
 
-import java.util.EnumMap;
-import java.util.Enumeration;
 import java.util.function.*;
 
 /**
