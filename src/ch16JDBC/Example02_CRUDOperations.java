@@ -1,4 +1,4 @@
-package jdbc;
+package ch16JDBC;
 
 import java.sql.*;
 

@@ -35,6 +35,8 @@ import java.util.ArrayList;
  */
 public class MethodReferencesAndBuiltInInterfaces {
 
+    private int num = 10;
+
     // ===== METHOD REFERENCE FORMAT 1: STATIC METHODS =====
 
     public static int staticAdd(int a, int b) {
@@ -115,6 +117,31 @@ public class MethodReferencesAndBuiltInInterfaces {
 
     // ===== METHOD REFERENCE FORMAT 4: CONSTRUCTORS =====
 
+    // Helper class for constructor reference example
+    static class Person {
+        String name;
+        int age;
+
+        Person() {
+            this.name = "Unknown";
+            this.age = 0;
+        }
+
+        Person(String name) {
+            this(name, 0);
+        }
+
+        Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        @Override
+        public String toString() {
+            return name + " (" + age + ")";
+        }
+    }
+
     public static void demonstrateConstructorReferences() {
         // Constructor with no args
         Supplier<StringBuilder> newSbRef = StringBuilder::new;       // Method reference
@@ -124,13 +151,22 @@ public class MethodReferencesAndBuiltInInterfaces {
         Function<String, StringBuilder> sbWithStringRef = StringBuilder::new;  // Method reference
         Function<String, StringBuilder> sbWithStringLambda = s -> new StringBuilder(s);  // Equivalent lambda
 
-        // Constructor with two args
-        BiFunction<String, String, String> newStringRef = String::new;  // Method reference - not commonly used
-        // Note: String(char[] value, int offset, int count) - various constructors
+        // Constructor with two args - using custom class
+        BiFunction<String, Integer, Person> personRef = Person::new;  // Method reference
+        BiFunction<String, Integer, Person> personLambda = (name, age) -> new Person(name, age);  // Equivalent lambda
+        System.out.println("Two-arg constructor: " + personRef.apply("Alice", 30));
 
         // Array constructor
         Function<Integer, String[]> arrayRef = String[]::new;        // Method reference
         Function<Integer, String[]> arrayLambda = size -> new String[size];  // Equivalent lambda
+
+        BiFunction<Person, Person, List<Person>> createListOfPeople = List::of;
+
+        Person p1 = personRef.apply("Casey", 35);
+        Person p2 = personRef.apply("Yasmim", 29);
+
+        List<Person> people = createListOfPeople.apply(p1, p2);
+        System.out.println("BiFunction<Person, Person, List<Person> : List::of ==> " + people);
 
         System.out.println("Constructor ref: " + newSbRef.get().append("test"));
     }
@@ -173,7 +209,7 @@ public class MethodReferencesAndBuiltInInterfaces {
         System.out.println("UnaryOperator: " + unaryOp.apply("hello"));
 
         // BinaryOperator<T>: (T, T) -> T (two inputs same type, output same type)
-        BinaryOperator<Integer> binaryOp = (a, b) -> a + b;
+        BinaryOperator<Integer> binaryOp = Integer::sum;
         System.out.println("BinaryOperator: " + binaryOp.apply(5, 3));
     }
 
@@ -189,8 +225,15 @@ public class MethodReferencesAndBuiltInInterfaces {
         chained.accept("test");
 
         // FUNCTION: andThen() - chains functions, output of first becomes input of second
-        Function<String, String> f1 = s -> s.toLowerCase();
-        Function<String, Integer> f2 = s -> s.length();
+        Function<String, String> f1 = s -> {
+            s = s.toLowerCase();
+            System.out.println(s);
+            return s;
+        };
+        Function<String, Integer> f2 = s -> {
+            System.out.println("Getting length of string");
+            return s.length();
+        };
         Function<String, Integer> andThenChain = f1.andThen(f2);  // f1 first, then f2
         // Equivalent to: s -> f2.apply(f1.apply(s))
         // Equivalent to: s -> s.toLowerCase().length()
