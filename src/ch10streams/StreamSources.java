@@ -1,6 +1,8 @@
 package ch10streams;
 
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Stream;
 

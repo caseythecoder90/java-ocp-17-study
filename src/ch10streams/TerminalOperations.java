@@ -118,8 +118,19 @@ public class TerminalOperations {
 
         // Find maximum
         Optional<Integer> max = numbers.stream()
-            .max(Comparator.naturalOrder());
+            .max(Comparator.comparingInt(x -> x));
         System.out.println("max(naturalOrder): " + max.orElse(-1));
+
+        // My practice
+        List<String> myList = List.of("Case", "Yasmim", "Billy", "Chuck");
+        Optional<String> optionalDouble = myList.stream()
+                .min(Comparator.comparingDouble(s -> {
+                    var doubleToCompare = (double) s.length();
+                    System.out.println(doubleToCompare);
+                    return doubleToCompare;
+                }));
+        System.out.println("Optional Double: " + optionalDouble);
+
 
         // With custom comparator - find shortest string
         List<String> words = List.of("apple", "pie", "banana", "kiwi");

@@ -3,6 +3,7 @@ package ch08lambdasandfunctionalinterfaces;
 import java.util.function.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Method References and Built-In Functional Interfaces
