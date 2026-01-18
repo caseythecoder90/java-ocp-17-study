@@ -149,6 +149,9 @@ public class StaticNestedClasses {
     // ===== EXAM TRAPS =====
 
     static class ExamTrap {
+        static interface Y {
+
+        }
         private int instanceVar = 5;
         private static int staticVar = 10;
 

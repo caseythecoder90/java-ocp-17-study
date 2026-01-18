@@ -1,0 +1,88 @@
+
+
+reduce signatures
+
+1) with identity and accumulator (T -> T)
+
+T reduce(T identity, BinaryOperator<T> accumulator);
+
+(T, T) -> T
+
+T1 = result so far
+T2 = current element in the stream
+
+String fullString = List.of("a", "b", "c").stream()
+    .reduce("", (combined, curr) -> combined + curr);
+
+2) no identity and accumulator (T -> T)
+
+Optional<T> reduce(BinaryOperator<T> accumulator);
+
+Optional<String> opt = List.of("a", "b", "c").stream()
+    .reduce((combined, curr) -> combined + curr);
+
+System.out.println(opt.orElse("not present"));
+
+3) identity, accumulator, merge function : when the result and elements are different
+    types T and U
+
+U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner);
+
+List<String> list = List.of("a", "b", "c");
+
+int totalLen = list.stream()
+    .reduce(0, (i, s) -> i + s.length(), Integer::sum);
+
+Collect (mutable reduction) BiConsumer and not BiFunction which is producing a new
+object each time and is more expensive.
+
+
+
+R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner);
+
+List<String> list = new ArrayList<>(List.of(1, 1, 2, 2, 3, 3, 4, 4, 5, 5));
+
+Set<Integer> set = list.stream()
+    .collect(() -> new HashSet<Integer>(), (hashSet, element) -> hashSet.add(element),
+                    (hs1, hs2) -> hs2.addAll(hs2));
+
+    .collect(HashSet::new, HashSet::add, HashSet::addAll);
+
+
+record Person(String name, int age) {
+
+    public static Person of(String name, int age) {
+        return new Person(name, age);
+    }
+
+}
+
+List<Person> people = new ArrayList<>(List.of(
+        Person.of("Casey", 35),
+        Person.of("Yasmim", 29));
+
+IntSummaryStatistics summary = people.stream()
+    .collect(Collectors.summarizingInt(Person::getAge));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
