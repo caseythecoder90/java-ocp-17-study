@@ -52,6 +52,7 @@ package ch07beyondclasses;
  * - Implicitly sets all fields (long constructor called at end)
  * - Apply transformations BEFORE object created
  * - Can modify PARAMETERS, NOT fields
+ * - Compact constructor access level cannot be more restrictive than the record access level ('public')
  *
  * record Person(String name, int age) {
  *     public Person {  // Compact constructor
