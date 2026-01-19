@@ -249,10 +249,10 @@ public class Internationalization {
                          1_234_567, 7_654_321, 1_000_000_000L, 1_500_000_000_000L};
 
         System.out.println("Style.SHORT vs Style.LONG (US Locale):");
-        System.out.println("  Number          | SHORT    | LONG");
-        System.out.println("  ----------------|----------|------------------");
+        System.out.println("  Number             | SHORT    | LONG");
+        System.out.println("  -------------------|----------|------------------");
         for (long value : values) {
-            System.out.printf("  %,15d | %-8s | %s%n",
+            System.out.printf("  %,18d | %-8s | %s%n",
                     value, shortFormat.format(value), longFormat.format(value));
         }
 

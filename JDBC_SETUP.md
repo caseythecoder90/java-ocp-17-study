@@ -53,7 +53,7 @@ You can connect to the database using:
 
 Using psql (if installed):
 ```bash
-docker exec -it ch16JDBC-practice-db psql -U ocpuser -d ocp_practice
+docker exec -it ch16jdbc-practice-db psql -U ocpuser -d ocp_practice
 ```
 
 Or use IntelliJ's Database tool:
@@ -63,11 +63,11 @@ Or use IntelliJ's Database tool:
 
 ## Running JDBC Examples
 
-The examples are organized by topic and located in `src/ch16JDBC/`:
+The examples are organized by topic and located in `src/ch16jdbc/`:
 
 ### Example 1: Basic Connection
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example01_BasicConnection"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example01_BasicConnection"
 ```
 
 Topics covered:
@@ -78,7 +78,7 @@ Topics covered:
 
 ### Example 2: CRUD Operations
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example02_CRUDOperations"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example02_CRUDOperations"
 ```
 
 Topics covered:
@@ -90,7 +90,7 @@ Topics covered:
 
 ### Example 3: ResultSet Navigation
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example03_ResultSetNavigation"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example03_ResultSetNavigation"
 ```
 
 Topics covered:
@@ -101,7 +101,7 @@ Topics covered:
 
 ### Example 4: Transactions
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example04_Transactions"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example04_Transactions"
 ```
 
 Topics covered:
@@ -112,7 +112,7 @@ Topics covered:
 
 ### Example 5: Batch Processing
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example05_BatchProcessing"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example05_BatchProcessing"
 ```
 
 Topics covered:
@@ -123,7 +123,7 @@ Topics covered:
 
 ### Example 6: MetaData
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example06_MetaData"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example06_MetaData"
 ```
 
 Topics covered:
@@ -134,7 +134,7 @@ Topics covered:
 
 ### Example 7: execute() Method
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example07_ExecuteMethod"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example07_ExecuteMethod"
 ```
 
 Topics covered:
@@ -149,17 +149,17 @@ First, load the stored procedures into the database:
 
 **PowerShell:**
 ```powershell
-Get-Content stored-procedures.sql | docker exec -i ch16JDBC-practice-db psql -U ocpuser -d ocp_practice
+Get-Content stored-procedures.sql | docker exec -i ch16jdbc-practice-db psql -U ocpuser -d ocp_practice
 ```
 
 **Bash/Git Bash:**
 ```bash
-docker exec -i ch16JDBC-practice-db psql -U ocpuser -d ocp_practice < stored-procedures.sql
+docker exec -i ch16jdbc-practice-db psql -U ocpuser -d ocp_practice < stored-procedures.sql
 ```
 
 Then run the example:
 ```bash
-mvn compile exec:java -Dexec.mainClass="ch16JDBC.Example08_CallableStatement"
+mvn compile exec:java -Dexec.mainClass="ch16jdbc.Example08_CallableStatement"
 ```
 
 Topics covered:

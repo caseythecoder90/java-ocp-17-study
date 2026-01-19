@@ -33,6 +33,7 @@ public class OperatorExamples {
         shiftOperators();
         ternaryOperator();
         instanceofOperator();
+        demonstrateInstanceOfInDepth();
         stringConcatenation();
         numericPromotion();
     }
@@ -416,6 +417,7 @@ public class OperatorExamples {
     /**
      * INSTANCEOF OPERATOR
      * Tests if object is instance of a class
+     * It checks the actual runtime object type and NOT the reference type
      */
     private static void instanceofOperator() {
         System.out.println("=== INSTANCEOF OPERATOR ===");
@@ -438,6 +440,140 @@ public class OperatorExamples {
 
         System.out.println();
     }
+
+    public static void demonstrateInstanceOfInDepth() {
+        System.out.println("=".repeat(70));
+        System.out.println("INSTANCEOF CHECKS THE ACTUAL OBJECT, NOT THE REFERENCE TYPE");
+        System.out.println("=".repeat(70) + "\n");
+
+        // Example 1: Reference type vs Actual object type
+        System.out.println("--- Example 1: Basic instanceof ---");
+        String str = "hello";           // Reference: String, Object: String
+        Object obj = "world";            // Reference: Object, Object: String
+
+        System.out.println("String str = \"hello\";");
+        System.out.println("Object obj = \"world\";");
+        System.out.println();
+
+        System.out.println("str instanceof String:  " + (str instanceof String));  // true
+        System.out.println("obj instanceof String:  " + (obj instanceof String));  // true ← KEY!
+        System.out.println("obj instanceof Object:  " + (obj instanceof Object));  // true
+
+        System.out.println("\nWhy? Because obj POINTS TO a String object in memory!");
+        System.out.println("The reference type (Object) doesn't matter for instanceof.");
+
+        // Example 2: Class hierarchy
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("--- Example 2: Class Hierarchy ---");
+        System.out.println("=".repeat(70) + "\n");
+
+        Animal animal = new Dog();      // Reference: Animal, Object: Dog
+
+        System.out.println("Animal animal = new Dog();");
+        System.out.println();
+        System.out.println("animal instanceof Dog:     " + (animal instanceof Dog));     // true
+        System.out.println("animal instanceof Animal:  " + (animal instanceof Animal));  // true
+        System.out.println("animal instanceof Object:  " + (animal instanceof Object));  // true
+
+        System.out.println("\nThe actual object is a Dog, so instanceof Dog returns true!");
+
+        // Example 3: Demonstrating with multiple references
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("--- Example 3: Same Object, Different Reference Types ---");
+        System.out.println("=".repeat(70) + "\n");
+
+        Dog actualDog = new Dog();
+        Animal animalRef = actualDog;
+        Object objectRef = actualDog;
+
+        System.out.println("Dog actualDog = new Dog();");
+        System.out.println("Animal animalRef = actualDog;");
+        System.out.println("Object objectRef = actualDog;");
+        System.out.println("\nAll three references point to THE SAME Dog object!");
+        System.out.println();
+
+        System.out.println("Reference Type | instanceof Dog | instanceof Animal | instanceof Object");
+        System.out.println("---------------|----------------|-------------------|------------------");
+        System.out.printf("%-14s | %-14s | %-17s | %s%n",
+                "Dog", (actualDog instanceof Dog), (actualDog instanceof Animal), (actualDog instanceof Object));
+        System.out.printf("%-14s | %-14s | %-17s | %s%n",
+                "Animal", (animalRef instanceof Dog), (animalRef instanceof Animal), (animalRef instanceof Object));
+        System.out.printf("%-14s | %-14s | %-17s | %s%n",
+                "Object", (objectRef instanceof Dog), (objectRef instanceof Animal), (objectRef instanceof Object));
+
+        System.out.println("\nAll return the SAME results because they point to the same Dog object!");
+
+        // Example 4: What about compile-time checks?
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("--- Example 4: Compile-Time vs Runtime Checks ---");
+        System.out.println("=".repeat(70) + "\n");
+
+        Object obj2 = "test";
+
+        // Runtime check - works!
+        if (obj2 instanceof String) {
+            System.out.println("✓ Runtime: obj2 is a String");
+        }
+
+        // But you can't do this at compile-time without casting:
+        // int length = obj2.length();  // ← COMPILE ERROR!
+
+        // You need to cast:
+        int length = ((String) obj2).length();
+        System.out.println("  After casting: length = " + length);
+
+        // Or use pattern matching (Java 16+):
+        if (obj2 instanceof String s) {
+            System.out.println("  Pattern matching: length = " + s.length());
+        }
+
+        // Example 5: Null check
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("--- Example 5: null is not an instance of anything ---");
+        System.out.println("=".repeat(70) + "\n");
+
+        String nullStr = null;
+        Object nullObj = null;
+
+        System.out.println("null instanceof String:  " + (nullStr instanceof String));  // false
+        System.out.println("null instanceof Object:  " + (nullObj instanceof Object));  // false
+        System.out.println("\nnull is NEVER an instance of any type!");
+
+        // Example 6: Illegal instanceof at compile time
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("--- Example 6: When instanceof Won't Compile ---");
+        System.out.println("=".repeat(70) + "\n");
+
+        String str2 = "test";
+        // str2 instanceof Integer  // ← WON'T COMPILE!
+        // Why? String and Integer have NO relationship
+        // The compiler knows this is impossible
+
+        System.out.println("String str2 = \"test\";");
+        System.out.println("str2 instanceof Integer  // ← Compilation ERROR!");
+        System.out.println("\nWhy? String and Integer are unrelated types.");
+        System.out.println("The compiler knows a String can NEVER be an Integer.");
+
+        // But this compiles (runtime check):
+        Object obj3 = "test";
+        System.out.println("\nObject obj3 = \"test\";");
+        System.out.println("obj3 instanceof Integer: " + (obj3 instanceof Integer));  // false
+        System.out.println("\nThis compiles because obj3 COULD point to an Integer.");
+
+        // Summary
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("KEY TAKEAWAYS");
+        System.out.println("=".repeat(70));
+        System.out.println("✓ instanceof checks the ACTUAL OBJECT TYPE at runtime");
+        System.out.println("✓ NOT the reference variable's declared type");
+        System.out.println("✓ Works up the inheritance hierarchy (Dog is an Animal)");
+        System.out.println("✓ null instanceof AnyType is always false");
+        System.out.println("✓ Compiler prevents impossible checks (String instanceof Integer)");
+        System.out.println("✓ Use pattern matching to avoid casting: if (obj instanceof String s)");
+    }
+
+    static class Animal {}
+    static class Dog extends Animal {}
 
     /**
      * STRING CONCATENATION (+)
