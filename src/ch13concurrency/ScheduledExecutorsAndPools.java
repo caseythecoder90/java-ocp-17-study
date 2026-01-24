@@ -523,10 +523,10 @@ public class ScheduledExecutorsAndPools {
         // Fixed Rate
         System.out.println("Fixed Rate (start-to-start):");
         ScheduledExecutorService rate = Executors.newSingleThreadScheduledExecutor();
-        long startTime = System.currentTimeMillis();
+        long startTimeRate = System.currentTimeMillis();
 
         rate.scheduleAtFixedRate(() -> {
-            long elapsed = System.currentTimeMillis() - startTime;
+            long elapsed = System.currentTimeMillis() - startTimeRate;
             System.out.println("  Rate: Start at " + elapsed + "ms");
             try {
                 Thread.sleep(500);
@@ -543,10 +543,10 @@ public class ScheduledExecutorsAndPools {
         // Fixed Delay
         System.out.println("\nFixed Delay (end-to-start):");
         ScheduledExecutorService delay = Executors.newSingleThreadScheduledExecutor();
-        startTime = System.currentTimeMillis();
+        long startTimeDelay = System.currentTimeMillis();
 
         delay.scheduleWithFixedDelay(() -> {
-            long elapsed = System.currentTimeMillis() - startTime;
+            long elapsed = System.currentTimeMillis() - startTimeDelay;
             System.out.println("  Delay: Start at " + elapsed + "ms");
             try {
                 Thread.sleep(500);
