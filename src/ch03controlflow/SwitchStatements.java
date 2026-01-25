@@ -75,7 +75,7 @@ package ch03controlflow;
  * - Final constant variables: final int MAX = 10;  case MAX:
  *
  * NOT ALLOWED:
- * - Variables: int x = 5; case x:  // DOES NOT COMPILE
+ * - Variables: int x = 5; case x:  // DOES NOT COMPILE (Final keyword required - effectively final is not enough)
  * - Non-final variables: case myVariable:  // DOES NOT COMPILE
  * - Method calls: case getValue():  // DOES NOT COMPILE
  * - Expressions with variables: case x + 1:  // DOES NOT COMPILE
@@ -450,12 +450,16 @@ public class SwitchStatements {
         // VALID: Final constant variable
         final int MAX = 10;
         final int MIN = 1;
+        final int TEST_FINAL_PLUS_LITERAL = 90;
         switch (value) {
             case MIN:  // Final constant - OK
                 System.out.println("Minimum");
                 break;
             case MAX:  // Final constant - OK
                 System.out.println("Maximum");
+                break;
+            case TEST_FINAL_PLUS_LITERAL + 10:
+                System.out.println("Testing final variable plus literal (is OK)");
                 break;
         }
 

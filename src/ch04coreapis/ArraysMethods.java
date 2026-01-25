@@ -15,7 +15,7 @@ import java.util.Arrays;
  * KEY METHODS COVERED:
  * 1. compare()      - Compare two arrays lexicographically
  * 2. mismatch()     - Find first index where arrays differ
- * 3. binarySearch() - Search for element in sorted array
+ * 3. binarySearch() - Search for element in sorted array (remember it must be sorted!)
  * 4. sort()         - Sort array in ascending order
  *
  * ═══════════════════════════════════════════════════════════════════════════
@@ -92,19 +92,19 @@ public class ArraysMethods {
         // First array larger
         int[] a5 = {1, 5, 3};
         int[] a6 = {1, 2, 3};
-        System.out.println("compare([1,5,3], [1,2,3]) = " + java.util.Arrays.compare(a5, a6)); // 1 (5 > 2)
+        System.out.println("compare([1,5,3], [1,2,3]) = " + Arrays.compare(a5, a6)); // 1 (5 > 2)
 
         // String arrays - lexicographic comparison
         String[] s1 = {"apple", "banana"};
         String[] s2 = {"apple", "cherry"};
         System.out.println("compare([\"apple\",\"banana\"], [\"apple\",\"cherry\"]) = "
-                + java.util.Arrays.compare(s1, s2)); // -1 ("banana" < "cherry")
+                + Arrays.compare(s1, s2)); // -1 ("banana" < "cherry")
 
         // String arrays - case matters!
         String[] s3 = {"Apple"};
         String[] s4 = {"apple"};
         System.out.println("compare([\"Apple\"], [\"apple\"]) = "
-                + java.util.Arrays.compare(s3, s4)); // -1 (uppercase < lowercase in ASCII)
+                + Arrays.compare(s3, s4)); // -1 (uppercase < lowercase in ASCII)
 
         System.out.println();
     }
@@ -120,17 +120,17 @@ public class ArraysMethods {
         // Shorter array is prefix - shorter is smaller
         int[] a1 = {1, 2};
         int[] a2 = {1, 2, 3};
-        System.out.println("compare([1,2], [1,2,3]) = " + java.util.Arrays.compare(a1, a2)); // -1
+        System.out.println("compare([1,2], [1,2,3]) = " + Arrays.compare(a1, a2)); // -1
 
         // Longer array comes first - longer is larger
         int[] a3 = {1, 2, 3};
         int[] a4 = {1, 2};
-        System.out.println("compare([1,2,3], [1,2]) = " + java.util.Arrays.compare(a3, a4)); // 1
+        System.out.println("compare([1,2,3], [1,2]) = " + Arrays.compare(a3, a4)); // 1
 
-        // Different lengths, but difference found before end
+        // Different lengths, but difference found before end **
         int[] a5 = {1, 5};
         int[] a6 = {1, 2, 3, 4};
-        System.out.println("compare([1,5], [1,2,3,4]) = " + java.util.Arrays.compare(a5, a6)); // 1 (5 > 2)
+        System.out.println("compare([1,5], [1,2,3,4]) = " + Arrays.compare(a5, a6)); // 1 (5 > 2)
 
         System.out.println();
     }
@@ -193,28 +193,28 @@ public class ArraysMethods {
         // Equal arrays
         int[] a1 = {1, 2, 3};
         int[] a2 = {1, 2, 3};
-        System.out.println("mismatch([1,2,3], [1,2,3]) = " + java.util.Arrays.mismatch(a1, a2)); // -1
+        System.out.println("mismatch([1,2,3], [1,2,3]) = " + Arrays.mismatch(a1, a2)); // -1
 
         // Difference at first position
         int[] a3 = {1, 2, 3};
         int[] a4 = {9, 2, 3};
-        System.out.println("mismatch([1,2,3], [9,2,3]) = " + java.util.Arrays.mismatch(a3, a4)); // 0
+        System.out.println("mismatch([1,2,3], [9,2,3]) = " + Arrays.mismatch(a3, a4)); // 0
 
         // Difference at middle position
         int[] a5 = {1, 2, 3};
         int[] a6 = {1, 5, 3};
-        System.out.println("mismatch([1,2,3], [1,5,3]) = " + java.util.Arrays.mismatch(a5, a6)); // 1
+        System.out.println("mismatch([1,2,3], [1,5,3]) = " + Arrays.mismatch(a5, a6)); // 1
 
         // Difference at last position
         int[] a7 = {1, 2, 3};
         int[] a8 = {1, 2, 9};
-        System.out.println("mismatch([1,2,3], [1,2,9]) = " + java.util.Arrays.mismatch(a7, a8)); // 2
+        System.out.println("mismatch([1,2,3], [1,2,9]) = " + Arrays.mismatch(a7, a8)); // 2
 
         // String arrays
         String[] s1 = {"apple", "banana", "cherry"};
         String[] s2 = {"apple", "blueberry", "cherry"};
         System.out.println("mismatch([\"apple\",\"banana\",\"cherry\"], [\"apple\",\"blueberry\",\"cherry\"]) = "
-                + java.util.Arrays.mismatch(s1, s2)); // 1
+                + Arrays.mismatch(s1, s2)); // 1
 
         System.out.println();
     }
@@ -230,17 +230,17 @@ public class ArraysMethods {
         // First array is prefix
         int[] a1 = {1, 2};
         int[] a2 = {1, 2, 3};
-        System.out.println("mismatch([1,2], [1,2,3]) = " + java.util.Arrays.mismatch(a1, a2)); // 2 (length of shorter)
+        System.out.println("mismatch([1,2], [1,2,3]) = " + Arrays.mismatch(a1, a2)); // 2 (length of shorter)
 
         // Second array is prefix
         int[] a3 = {1, 2, 3, 4};
         int[] a4 = {1, 2, 3};
-        System.out.println("mismatch([1,2,3,4], [1,2,3]) = " + java.util.Arrays.mismatch(a3, a4)); // 3 (length of shorter)
+        System.out.println("mismatch([1,2,3,4], [1,2,3]) = " + Arrays.mismatch(a3, a4)); // 3 (length of shorter)
 
-        // Difference before length difference matters
+        // Difference before length difference matters **
         int[] a5 = {1, 5};
         int[] a6 = {1, 2, 3, 4};
-        System.out.println("mismatch([1,5], [1,2,3,4]) = " + java.util.Arrays.mismatch(a5, a6)); // 1 (first difference)
+        System.out.println("mismatch([1,5], [1,2,3,4]) = " + Arrays.mismatch(a5, a6)); // 1 (first difference)
 
         // Empty array vs non-empty
         int[] empty = {};
