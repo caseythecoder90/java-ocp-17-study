@@ -315,7 +315,7 @@ public class DateTimePeriodDuration {
      * Used with LocalTime, LocalDateTime, ZonedDateTime
      *
      * Key signatures:
-     * - static Duration ofDays(long days)
+     * - static Duration ofDays(long days)  (converts to hours)
      * - static Duration ofHours(long hours)
      * - static Duration ofMinutes(long minutes)
      * - static Duration ofSeconds(long seconds)

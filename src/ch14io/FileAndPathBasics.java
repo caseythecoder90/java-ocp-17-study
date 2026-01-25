@@ -33,7 +33,7 @@ import java.nio.file.*;
  * ────
  * A string representation of a file or directory location.
  * Example Unix: /home/user/file.txt
- * Example Windows: C:\Users\user\file.txt
+ * Example Windows: C:\Users\\user\file.txt
  *
  *
  * ROOT DIRECTORY
@@ -44,7 +44,7 @@ import java.nio.file.*;
  *
  * Examples:
  *   /home/user/file.txt    → root is /
- *   C:\Users\user\file.txt → root is C:\
+ *   C:\Users\\user\file.txt → root is C:\
  *
  *
  * ABSOLUTE PATH
@@ -52,7 +52,7 @@ import java.nio.file.*;
  * Full path from the root directory to a file/directory.
  * Always starts from root.
  * Unix: /home/user/documents/file.txt
- * Windows: C:\Users\user\documents\file.txt
+ * Windows: C:\Users\\user\documents\file.txt
  *
  * CHARACTERISTICS:
  * - Unambiguous - always refers to the same location
@@ -767,7 +767,7 @@ public class FileAndPathBasics {
 
         // These throw IOException if file doesn't exist
         try {
-            System.out.println("size(): " + Files.size(path));
+            System.out.println("size(): " + Files.size(path)); // NoSuchFileException
         } catch (IOException e) {
             System.out.println("size() threw IOException: " + e.getMessage());
         }
