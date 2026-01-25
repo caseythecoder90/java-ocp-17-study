@@ -36,6 +36,8 @@ package ch06inheritance;
  * 4. Concrete (non-abstract) class MUST implement ALL inherited abstract methods
  * 5. Abstract classes CAN have constructors
  * 6. Cannot be both abstract and final (contradiction!)
+ * 7. Abstract methods can be public, protected, or package (default) access
+ * 8. Overriding methods follow normal rules: same or MORE accessible
  *
  * ═══════════════════════════════════════════════════════════════════════════
  * CONSTRUCTORS IN ABSTRACT CLASSES
@@ -77,6 +79,18 @@ public class AbstractClasses {
         MixedAbstract cat = new ConcreteCat("Whiskers");
         cat.makeSound();  // Implemented in concrete class
         cat.sleep();      // Inherited concrete method
+
+        // ────────────────────────────────────────────────────────────────────
+        // Access modifiers on abstract methods
+        // ────────────────────────────────────────────────────────────────────
+        ConcreteAccessExample accessDemo = new ConcreteAccessExample();
+        accessDemo.publicMethod();      // Public abstract method implemented
+        accessDemo.protectedMethod();   // Protected abstract method upgraded to public
+        accessDemo.packageMethod();     // Package abstract method implemented
+
+        CorrectUpgrade upgradeDemo = new CorrectUpgrade();
+        upgradeDemo.method1();  // Protected -> public upgrade
+        upgradeDemo.method2();  // Package -> protected upgrade
 
         System.out.println("\n✓ All abstract examples work");
     }
@@ -213,6 +227,80 @@ class MultiDog extends MultiMammal {
     @Override
     void giveBirth() { System.out.println("Giving birth"); }
     // Must implement ALL three abstract methods
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACCESS MODIFIERS ON ABSTRACT METHODS - FOLLOW OVERRIDE RULES
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Abstract methods can be public, protected, or package (default) access
+// Concrete classes follow normal override rules:
+// - MUST be same or MORE accessible
+// - Cannot be MORE restrictive
+
+abstract class AccessModifierExample {
+    // Public abstract method
+    public abstract void publicMethod();
+
+    // Protected abstract method
+    protected abstract void protectedMethod();
+
+    // Package (default) abstract method
+    abstract void packageMethod();
+
+    // NOTE: Cannot be private - private methods not inherited!
+    // private abstract void privateMethod();  // ✗ DOES NOT COMPILE
+}
+
+class ConcreteAccessExample extends AccessModifierExample {
+    // Public method stays public ✓
+    @Override
+    public void publicMethod() {
+        System.out.println("Public implementation");
+    }
+
+    // Protected can become public ✓ (more accessible)
+    @Override
+    public void protectedMethod() {
+        System.out.println("Protected -> public implementation");
+    }
+
+    // Package method stays package ✓
+    @Override
+    void packageMethod() {
+        System.out.println("Package implementation");
+    }
+}
+
+// EXAM TRAP: Cannot make override MORE restrictive
+// class BadAccessExample extends AccessModifierExample {
+//     // ✗ DOES NOT COMPILE - cannot reduce from public to protected
+//     @Override
+//     protected void publicMethod() { }
+//
+//     // ✗ DOES NOT COMPILE - cannot reduce from protected to package
+//     @Override
+//     void protectedMethod() { }
+//
+//     // ✗ DOES NOT COMPILE - cannot reduce from package to private
+//     @Override
+//     private void packageMethod() { }
+// }
+
+// Valid upgrade paths (same or more accessible):
+abstract class UpgradePathsExample {
+    protected abstract void method1();
+    abstract void method2();
+}
+
+class CorrectUpgrade extends UpgradePathsExample {
+    // Protected -> Public ✓ (more accessible)
+    @Override
+    public void method1() { }
+
+    // Package -> Protected ✓ (more accessible)
+    @Override
+    protected void method2() { }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
