@@ -1,0 +1,161 @@
+What is the result of executing the following program? (Choose all that apply.)
+
+import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
+public class BeachManager {
+   private Lock lock = new ReentrantLock();
+   public void goSwimming() {
+      lock.lock();           // y1
+      if (lock.tryLock()) {  // y2
+         System.out.println("Swim!");
+      }
+      lock.unlock();
+   }
+   public static void main(String[] args) {
+      var service = Executors.newFixedThreadPool(2);
+      try {
+         BeachManager b = new BeachManager();
+         for (int i = 0; i ˂ 2; i++)
+            service.submit(() -˃ b.goSwimming());
+      } finally { service.shutdown(); }
+      System.out.print("Tasks Complete");
+   } }
+A. It prints Swim! at least once.
+
+B. It prints Swim! exactly twice.
+
+C. It prints Tasks Complete.
+
+D. It hangs indefinitely at runtime.
+
+E. The code will not compile because of line y1.
+
+F. The code will not compile because of line y2.
+
+G. It throws an exception at runtime.
+
+Explanation
+
+The application compiles without issue. The most important thing to notice is that the goSwimming() method performs two lock requests, via lock() and tryLock(), but it has only one call to unlock(). For a ReentrantLock, a thread must call unlock() the same number of times it locks the object, or the lock will not be released. Therefore, only one thread is able to acquire the lock and print Swim! at runtime. For these reasons, option A is correct, and option B is incorrect. Option C is also correct, since the lock requests are performed on separate threads from the main() thread. Since the lock is never released by the first thread, the second thread will hang indefinitely, making option D correct.
+
+November 6, 2022 is the weekend that clocks fall back for daylight savings time. What is the output of the following? (Choose two.)
+
+var date = LocalDate.of(2022, Month.NOVEMBER, 6);
+var time = LocalTime.of(1, 30);
+var zone = ZoneId.of("US/Eastern");
+var dateTime1 = ZonedDateTime.of(date, time, zone);
+var dateTime2 = dateTime1.plus(1, ChronoUnit.HOURS);
+
+long diff = ChronoUnit.HOURS.between(dateTime1, dateTime2);
+int hour = dateTime2.getHour();
+boolean offset = dateTime1.getOffset() ==
+   dateTime2.getOffset();
+System.out.println("diff = " + diff);
+System.out.println("hour = " + hour);
+System.out.println("offset = " + offset);
+A. diff = 0
+
+B. diff = 1
+
+C. hour = 1
+
+D. hour = 2
+
+E. offset = true
+
+F. The code does not compile.
+
+G. A runtime exception is thrown.
+
+Explanation
+
+The dateTime1 variable evaluates to 2016-11-06T01:30-04:00[US/Eastern], and dateTime2 is 2016-11-06T01:30-05:00[US/Eastern]. Option B is correct because it is an hour later. The hours are the same, making option C correct as well. However, the time zone offset changes making it change from 5:30 GMT to 6:30 GMT. Therefore, option E is not correct.
+
+What is the output of the following?
+
+Stream˂String˃ s = Stream.empty();
+Stream˂String˃ s2 = Stream.empty();
+Predicate˂String˃ condition = b -˃ b.startsWith("c");
+Map˂Boolean, List˂String˃˃ p = s.collect(
+   Collectors.partitioningBy(condition));
+Map˂Boolean, List˂String˃˃ g = s2.collect(
+   Collectors.groupingBy(condition));
+System.out.println(p + " " + g);
+A. {} {}
+
+B. {} {false=[], true=[]}
+
+C. {false=[], true=[]} {}
+
+D. {false=[], true=[]} {false=[], true=[]}
+
+E. The code does not compile.
+
+F. An exception is thrown.
+
+Explanation
+
+This question is really tricky. Did we catch you? The code b -˃ b.startsWith("c") can be passed directly to partitioningBy() or groupingBy(). Java will infer the right type and pass a Predicate to the former and a Function to the latter. However, that’s not what happens in this example. By creating a Predicate variable, the type has to match, the call to groupingBy() does not compile, and option E is the answer.
+
+Which of the following declare immutable classes? (Choose all that apply.)
+
+public final class Frog { boolean poisonous = false; }
+public class Toad {
+   private final String name;
+   private Toad(String name) { this.name = name; }
+}
+
+public final class Turtle {}
+
+public final class Snake {
+   private final int size = 10;
+   void setSize(int size) { size = size; }
+   private Snake() {}
+}
+
+public class Salamander { private final short color = 10; }
+A. Frog
+
+B. Toad
+
+C. Turtle
+
+D. Snake
+
+E. Salamander
+
+F. None of the above
+
+Explanation
+
+Frog is mutable because a class in the same package can modify the poisonous variable. Toad, Turtle, and Snake are immutable because they cannot be extended by another class, declare only private final fields, and don’t expose any mutable objects. Although Snake contains a setSize() method, it does not modify the instance variable. Salamander is mutable because it can be extended by mutable subclass. Options B, C, and D are correct.
+
+What is true of this text block and its output? (Choose all that apply.)
+
+String puzzler = """
+   One " \
+   Two ""\n
+   Three \"\"\"
+""";
+System.out.print(puzzler);
+A. A total of three lines are printed.
+
+B. A total of four lines are printed.
+
+C. One blank line is printed.
+
+D. Two blank lines are printed.
+
+E. Two characters could be removed without changing the result.
+
+F. Three characters could be removed without changing the result.
+
+G. There is essential whitespace.
+
+H. There is incidental whitespace.
+
+Explanation
+
+There is a lot going on here. The output is four lines, making option B one answer. The first line is One " Two "", and the third line is Three """. The second line is blank due to the \n in the code. The fourth line is blank since the text block ends on a new line. Therefore, option D is another correct answer.
+
+The \"\"\" could be written as \""". Since two characters can be removed, option E is an additional answer. Finally, notice that the last line is at the beginning of a line. This means there is only essential whitespace, making option G the final correct answer.
