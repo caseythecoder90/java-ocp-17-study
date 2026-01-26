@@ -3,7 +3,8 @@
     "allow": [
       "Bash(javac:*)",
       "Bash(java:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(gh issue comment:*)"
     ]
   }
 }
