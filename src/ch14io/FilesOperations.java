@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.*;
+import java.time.temporal.ChronoUnit;
 
 /**
  * FILES OPERATIONS - OCP Java 17 Exam
@@ -34,6 +35,7 @@ import java.nio.file.*;
  *   - Does NOT throw exception if directory already exists
  *   - Like "mkdir -p" in Unix
  *   - Returns the directory path
+ *   - If all the directories already exist, it will complete without doing anything.
  *
  * Path createFile(Path path, FileAttribute<?>... attrs)
  *   throws IOException
@@ -57,6 +59,11 @@ import java.nio.file.*;
  *    - If source is directory, creates empty directory (doesn't copy contents)
  *    - Throws FileAlreadyExistsException if target exists (unless REPLACE_EXISTING)
  *    - Returns the target path
+ *    - When directories are copied, the copy is shallow. This means that the files and subdirectories within the
+ *      directory are not copied. A deep copy means that the entire tree is copied, including all of its content
+ *      and subdirectories.
+ *    - If target already exists, the copy() method will throw an exception. You can change this behavior by
+ *      providing the StandardCopyOption enum value REPLACE_EXISTING to the method
  *
  * 2. long copy(InputStream in, Path target, CopyOption... options)
  *    throws IOException
@@ -73,6 +80,16 @@ import java.nio.file.*;
  *
  * EXAM TRAP: Third overload has NO CopyOption parameter!
  * EXAM TRAP: Copying directory only creates empty directory, not contents!
+ * For the exam it is important to know how copy method operates on both files and directories. For example,
+ * lets say we have a file, food.txt, and a directory, /enclosure. Both the file and directory exist. If you do the following:
+ *      var file = Paths.get("file.txt");
+ *      var directory = Paths.get("/enclosure");
+ *      Files.copy(file, directory);
+ *
+ *      This above throws an exception because /enclosure already exists. If the directory did not exist, the process
+ *      would create a new file with the contents of food.txt, but the file would be called /enclosure.
+ *
+ *      Files.copy(file, Paths.get("/enclosure/food.txt"); // correct way to do it
  *
  * ═══════════════════════════════════════════════════════════════════════════
  * METHOD SIGNATURES - MOVING FILES
@@ -298,7 +315,8 @@ public class FilesOperations {
             } catch (FileAlreadyExistsException e) {
                 System.out.println("   FileAlreadyExistsException: target already exists");
             }
-
+            ChronoUnit unit = ChronoUnit.DAYS;
+            ChronoUnit unit2 = ChronoUnit.WEEKS;
             // Use REPLACE_EXISTING option
             Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("   With REPLACE_EXISTING: success");

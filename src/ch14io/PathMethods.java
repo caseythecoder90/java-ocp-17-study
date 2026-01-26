@@ -47,11 +47,12 @@ import java.nio.file.Paths;
  * 3. getFileName() returns the LAST element (same as getName(getNameCount()-1))
  * 4. getParent() returns everything EXCEPT the last element
  * 5. Relative paths have NO root (getRoot() returns null)
- * 6. resolve() with ABSOLUTE path argument RETURNS the argument (ignores caller)
+ * 6. resolve() with ABSOLUTE path argument RETURNS the argument (ignores caller) (think concatenation)
  * 7. relativize() requires BOTH paths to be absolute OR BOTH relative
  * 8. normalize() removes redundant "." and ".." but does NOT resolve symbolic links
  * 9. toRealPath() REQUIRES path to exist, resolves symbolic links, returns absolute path
  * 10. All Path methods return NEW Path objects (immutable)
+ * 11. subpath and getName() throw IllegalArgumentException if given an invalid path
  *
  * ═══════════════════════════════════════════════════════════════════════════
  * PATH METHOD SIGNATURES
@@ -182,8 +183,8 @@ public class PathMethods {
         System.out.println("getName(0): " + relative.getName(0));  // documents
         System.out.println("getName(1): " + relative.getName(1));  // file.txt
 
-        // EXAM TRAP: IndexOutOfBoundsException if index >= getNameCount()
-        // System.out.println(relative.getName(2));  // ✗ IndexOutOfBoundsException
+        // EXAM TRAP: IllegalArgumentException if index >= getNameCount()
+//         System.out.println(relative.getName(2));  // ✗ IllegalArgumentException
 
         // Edge case: Single element path
         Path single = Path.of("file.txt");
@@ -228,7 +229,8 @@ public class PathMethods {
     // Does NOT include the root.
     // Returned path is ALWAYS relative (no root).
     //
-    // EXAM TRAP: endIndex is exclusive, not inclusive!
+    // EXAM TRAP: endIndex is exclusive, not inclusive! Can give length of path from getNameCount because
+    // end index is exclusive. Reference below examples.
     // EXAM TRAP: Returned path is ALWAYS relative, even if original was absolute!
     //
     private static void demonstrateSubpath() {
@@ -303,9 +305,9 @@ public class PathMethods {
     private static void demonstrateGetParent() {
         System.out.println("\n=== getParent() ===");
 
-        Path p1 = Path.of("/home/user/documents/file.txt");
+        Path p1 = Path.of("/home/.././user/documents/file.txt");
         System.out.println("Path: " + p1);
-        System.out.println("Parent: " + p1.getParent());  // /home/user/documents
+        System.out.println("Parent: " + p1.getParent());  // /home/.././user/documents
 
         Path p2 = Path.of("documents/file.txt");
         System.out.println("\nPath: " + p2);
@@ -361,6 +363,11 @@ public class PathMethods {
     // ═══════════════════════════════════════════════════════════════════════════
     // resolve(Path) and resolve(String) - Join paths
     // ═══════════════════════════════════════════════════════════════════════════
+    // Think concatenation when you see this method. resolve() does not clean up path symbols
+    // The object on which the resolve() method is invoked becomes the basis for the new Path
+    // object, with the input argument being appended onto the Path.
+    //
+    // If the input parameter is an absolute path, the output wil be that absolute path. **
     //
     // Joins this path with another path.
     // Behavior depends on whether argument is absolute or relative:
