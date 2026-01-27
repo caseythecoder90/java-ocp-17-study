@@ -104,14 +104,14 @@ class FinalFields {
 
 class CompleteOrderParent {
     static { System.out.println("1. Parent static block"); }
-    { System.out.println("5. Parent instance block"); }
-    CompleteOrderParent() { System.out.println("6. Parent constructor"); }
+    { System.out.println("3. Parent instance block"); }
+    CompleteOrderParent() { System.out.println("4. Parent constructor"); }
 }
 
 class CompleteOrder extends CompleteOrderParent {
     static { System.out.println("2. Child static block"); }
-    { System.out.println("7. Child instance block"); }
-    CompleteOrder() { System.out.println("8. Child constructor"); }
+    { System.out.println("5. Child instance block"); }
+    CompleteOrder() { System.out.println("6. Child constructor"); }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

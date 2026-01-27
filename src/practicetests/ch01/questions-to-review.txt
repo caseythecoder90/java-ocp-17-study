@@ -159,3 +159,98 @@ Explanation
 There is a lot going on here. The output is four lines, making option B one answer. The first line is One " Two "", and the third line is Three """. The second line is blank due to the \n in the code. The fourth line is blank since the text block ends on a new line. Therefore, option D is another correct answer.
 
 The \"\"\" could be written as \""". Since two characters can be removed, option E is an additional answer. Finally, notice that the last line is at the beginning of a line. This means there is only essential whitespace, making option G the final correct answer.
+
+Assuming this program is executed with 20 threads available and without any delays from other threads within the operating system, what is the expected output?
+
+import java.util.concurrent.CopyOnWriteArrayList;
+public class Dinosaur {
+   private volatile int distance;
+   public void stomp() {
+      try {
+         ++distance;
+         Thread.sleep(100 * 1000);
+         distance++;
+      } catch (InterruptedException e) {}
+   }
+   private void findBreakfast(int checks) {
+      var p = new CopyOnWriteArrayList˂Thread˃();
+      for (int i = 0; i ˂ checks; i++)
+         p.add(new Thread(this::stomp));
+      p.forEach(t -˃ t.start());
+      p.forEach(t -˃ t.interrupt());
+   }
+   public static void main(String[] args) throws Exception {
+      var ship = new Dinosaur();
+      ship.findBreakfast(10);
+      Thread.sleep(10 * 1000);
+      System.out.print(ship.distance);
+   } }
+A. It always prints 10.
+
+B. It always prints 20.
+
+C. It prints a number from 0 to 10 (inclusive).
+
+D. It prints a number from 10 to 20 (inclusive).
+
+E. It does not compile.
+
+F. It compiles but prints an exception at runtime.
+
+G. It compiles but hangs indefinitely at runtime.
+
+The code compiles without issue. At runtime, it starts 10 threads and then interrupts each of them while they are sleeping for 100 seconds. For each thread, the first distance++ is executed, but the second is not. For this reason, the maximum value printed is 10. We say maximum, because the volatile instance variable distance is not thread‐safe. It’s possible the same value could be written twice. For this reason, option C is correct. Note that using CopyOnWriteArrayList over a regular ArrayList has no impact on this program.
+
+
+Assuming Donkey exists and is serializable and that dataFile refers to a properly serialized file of Donkey objects, what statements about the following code snippet are true? (Choose all that apply.)
+
+10: List˂Donkey˃ readRecords(String dataFile) {
+11:    var donkeys = new ArrayList˂Donkey˃();
+12:    try (var in = new ObjectInputStream(
+13:          new BufferedInputStream(
+14:                new FileReader(dataFile)))) {
+15:       while (true) {
+16:          var d = in.readObject();
+17:          if (d instanceof Donkey)
+18:             donkeys.add(d);
+19:       }
+20:    } catch (EOFException e) {
+21:    }
+22:    return donkeys;
+23: }
+A. Line 14 does not compile.
+
+B. Line 18 does not compile.
+
+C. Line 20 does not compile.
+
+D. The code contains additional compiler errors.
+
+E. The code compiles but throws an exception at runtime.
+
+F. The code compiles and runs without issue.
+
+Explanation
+
+The code has three bugs that prevent it from compiling. First, line 14 does not compile because BufferedInputStream takes an InputStream, not a Reader, making option A correct. Next, line 18 does not compile because d is not cast to a Donkey before being added to the List, making option B correct. Finally, there are numerous unhandled checked exceptions (IOException, FileNotFoundException, ClassNotFoundException), making option D also correct. One possible fix would be for line 10 to be changed to declare these exceptions.
+
+Incorrect
+
+What is true about a service provider module? (Choose all that apply.)
+
+A. It contains the interface that implementations must provide.
+
+B. It contains exactly one implementation of the interface.
+
+C. It contains one or more implementations of the interface.
+
+D. It can be changed without recompiling any other modules.
+
+E. It must have a provides directive.
+
+F. It must have a uses directive.
+
+Explanation
+
+A service provider interface declares the interface rather than a service provider, making option A incorrect. Each service provider is allowed to provide only one service provider implementation, making option B correct and option C incorrect. One of the benefits of services is being able to change the service provider dynamically, making option D correct. Finally, a service provider interface uses while a service provider provides, making option E correct and option F incorrect.
+

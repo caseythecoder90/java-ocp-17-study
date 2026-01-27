@@ -130,7 +130,8 @@ class FinalMethodChild extends FinalMethodParent {
 // ═══════════════════════════════════════════════════════════════════════════
 
 abstract class Shape {
-    abstract double getArea();  // No body
+    protected abstract double getArea();  // No body
+    abstract double getLength();
 
     void display() {            // Can have concrete methods
         System.out.println("Area: " + getArea());
@@ -145,8 +146,13 @@ class Circle extends Shape {
     }
 
     @Override
-    double getArea() {
+    public double getArea() {
         return Math.PI * radius * radius;
+    }
+
+    @Override
+    double getLength() {
+        return Math.PI * 50.0;
     }
 }
 
