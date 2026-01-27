@@ -153,7 +153,7 @@ interface DefaultInterface {
         System.out.println("Default method from interface");
     }
 
-    default void display() {
+    public default void display() {
         System.out.println("Interface display");
     }
 }

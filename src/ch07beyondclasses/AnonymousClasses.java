@@ -298,6 +298,8 @@ public class AnonymousClasses {
             }
         });
 
+        names.sort(Comparator.comparingInt(String::length)); // best way to actually sort
+
         System.out.println("Sorted by length: " + names);
 
         // Anonymous class passed directly as argument
