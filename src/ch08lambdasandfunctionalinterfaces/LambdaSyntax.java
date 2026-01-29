@@ -18,9 +18,29 @@ package ch08lambdasandfunctionalinterfaces;
  * - Single param (with parens): (p) -> expression
  * - Single param with type: (Type p) -> expression
  * - No params: () -> expression
+ * - var (Java 11+): (var p1, var p2) -> expression
+ *
+ * VAR IN LAMBDA PARAMETERS (Java 11+):
+ * ✓ Can use var: (var a, var b) -> a + b
+ * ✓ Allows annotations: (@NonNull var a, var b) -> a + b
+ * ✓ Must use parens: (var a) -> a * 2  (even for single param)
+ * ✗ Cannot mix with types: (var a, int b) -> a + b  // ERROR
+ * ✗ Cannot mix with inferred: (var a, b) -> a + b  // ERROR
+ * ✗ All-or-nothing rule: If one param uses var, ALL must use var
+ *
+ * LAMBDA PARAMETER NAMING (IMPORTANT EXAM TRAP!):
+ * ✗ CANNOT reuse local variable names: int x = 5; ... (x) -> ...  // ERROR
+ * ✗ CANNOT reuse method parameter names: void m(int x) { ... (x) -> ... }  // ERROR
+ * ✓ CAN shadow instance variables: this.x exists, (x) -> ... is OK
+ * ✓ CAN shadow static variables: static int x exists, (x) -> ... is OK
+ *
+ * KEY DIFFERENCE: Anonymous classes CAN shadow local vars, lambdas CANNOT!
  *
  * EXAM TRAPS:
  * - CANNOT mix typed and untyped: (int a, b) -> a + b  // ERROR
+ * - CANNOT mix var with types: (var a, int b) -> a + b  // ERROR
+ * - CANNOT mix var with inferred: (var a, b) -> a + b  // ERROR
+ * - var requires parens: var a -> a + 1  // ERROR (even single param)
  * - Return requires braces: (a, b) -> return a + b;  // ERROR
  * - Multiple params need parens: a, b -> a + b  // ERROR
  *
@@ -47,7 +67,8 @@ public class LambdaSyntax {
     interface Processor {
         void process(String data);  // One abstract method
 
-        default void preProcess(String data) { }  // Default methods allowed
+        private void helper() {} // private methods allowed and can be used by interface methods only
+        default void preProcess(String data) { helper(); }  // Default methods allowed
         default void postProcess(String data) { }
 
         static void info() { }  // Static methods allowed
@@ -229,5 +250,51 @@ public class LambdaSyntax {
         // VALID - all parameters typed or all inferred
         Calculator valid1 = (int a, int b) -> a + b;  // All typed
         Calculator valid2 = (a, b) -> a + b;          // All inferred
+
+        // ===== VAR IN LAMBDA PARAMETERS (Java 11+) =====
+
+        System.out.println("\n=== VAR IN LAMBDA PARAMETERS ===");
+
+        // VALID - using var for all parameters
+        Calculator varCalc = (var a, var b) -> a + b;
+        System.out.println("(var a, var b) -> a + b: " + varCalc.calculate(10, 5));
+
+        // VALID - var with single parameter (parens required!)
+        Transformer varTransform = (var x) -> x * 2;
+        System.out.println("(var x) -> x * 2: " + varTransform.transform(7));
+
+        // Main benefit: var allows annotations
+        // Calculator annotated = (@NonNull var a, @NonNull var b) -> a + b;
+
+        // INVALID EXAMPLES (commented out):
+        // Transformer noParens = var x -> x * 2;        // ERROR - parens required with var
+        // Calculator mixed1 = (var a, int b) -> a + b;  // ERROR - cannot mix var with types
+        // Calculator mixed2 = (var a, b) -> a + b;      // ERROR - cannot mix var with inferred
+
+        // ===== LAMBDA PARAMETER NAMING (SHADOWING) =====
+
+        System.out.println("\n=== LAMBDA PARAMETER NAMING ===");
+
+        // INVALID - cannot reuse local variable names
+        int localVar = 100;
+        // Transformer error1 = (localVar) -> localVar * 2;  // ERROR - cannot shadow local var
+
+        // VALID - CAN shadow instance variables
+        Transformer shadowInstance = (instanceVar) -> instanceVar * 2;
+        System.out.println("Shadowing instance var: " + shadowInstance.transform(5));
+
+        // VALID - CAN shadow static variables
+        Transformer shadowStatic = (staticVar) -> staticVar * 2;
+        System.out.println("Shadowing static var: " + shadowStatic.transform(5));
+
+        // Key difference: Anonymous classes CAN shadow local variables, lambdas CANNOT
+        System.out.println("\nNote: Anonymous classes CAN shadow local vars, lambdas CANNOT");
+        Transformer anonymousClass = new Transformer() {
+            @Override
+            public int transform(int localVar) {  // OK in anonymous class!
+                return localVar * 2;
+            }
+        };
+        System.out.println("Anonymous class shadowing local: " + anonymousClass.transform(7));
     }
 }

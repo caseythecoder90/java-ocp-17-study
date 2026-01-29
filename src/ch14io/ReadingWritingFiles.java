@@ -1,6 +1,7 @@
 package ch14io;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.List;
 import java.util.stream.Stream;
@@ -423,6 +424,8 @@ public class ReadingWritingFiles {
         System.out.println("Writing with explicit flush:");
         try (FileWriter fw = new FileWriter(file)) {
             fw.write("Line 1\n");
+            fw.write(8);
+            fw.write(new char[] {'a', 'b', 'c'});
             fw.flush();  // Force write to disk
             System.out.println("  Wrote Line 1 and flushed");
 
@@ -572,6 +575,7 @@ public class ReadingWritingFiles {
 
         // Clean up
         Files.deleteIfExists(path);
+
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

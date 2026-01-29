@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 
 /**
  * FILES OPERATIONS - OCP Java 17 Exam
@@ -65,6 +66,12 @@ import java.time.temporal.ChronoUnit;
  *    - If target already exists, the copy() method will throw an exception. You can change this behavior by
  *      providing the StandardCopyOption enum value REPLACE_EXISTING to the method
  *
+ *     Scenario,Exception
+ *     Source does not exist,NoSuchFileException
+ *     Target exists (without REPLACE_EXISTING),FileAlreadyExistsException
+ *     Parent directory of target doesn't exist,NoSuchFileException
+ *     No read/write permissions,AccessDeniedException
+ *
  * 2. long copy(InputStream in, Path target, CopyOption... options)
  *    throws IOException
  *    - Copies all bytes from InputStream to file
@@ -102,6 +109,14 @@ import java.time.temporal.ChronoUnit;
  *   - Throws FileAlreadyExistsException if target exists (unless REPLACE_EXISTING)
  *   - Throws DirectoryNotEmptyException if replacing non-empty directory
  *   - Returns the target path
+ *   Core Behavior
+ *   When you move a file or directory:
+ *   - If the source is a file: The file is moved to the target.
+ *   - If the source is a directory: The directory is moved.
+ *    Unlike copy, moving a directory does move its contents if the move is performed
+ *    within the same file store (disk partition).
+ *   - If the target exists: It throws a FileAlreadyExistsException unless you specify REPLACE_EXISTING.
+ *   - If the source doesn't exist: It throws a NoSuchFileException.
  *
  * ATOMIC MOVES:
  * - Use StandardCopyOption.ATOMIC_MOVE
@@ -304,7 +319,8 @@ public class FilesOperations {
             Path source = Path.of("source.txt");
             Files.writeString(source, "Hello, World!");
 
-            // Copy to target
+            // Copy to target - parent directories of the target must exist or will
+            // get a NoSuchFileException
             Path target = Path.of("target.txt");
             Files.copy(source, target);
             System.out.println("   Copied: " + source + " -> " + target);

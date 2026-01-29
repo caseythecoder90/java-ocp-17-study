@@ -1,6 +1,9 @@
 package ch14io;
 
+import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.stream.Stream;
 
 /**
  * NIO.2 OPTIONAL PARAMETERS (ENUMS) - OCP Java 17 Exam
@@ -181,7 +184,7 @@ import java.nio.file.*;
  */
 public class NIO2Options {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // ────────────────────────────────────────────────────────────────────
         // LinkOption examples
         // ────────────────────────────────────────────────────────────────────
@@ -202,191 +205,266 @@ public class NIO2Options {
         // ────────────────────────────────────────────────────────────────────
         demonstrateFileVisitOption();
 
-        System.out.println("\n✓ All NIO.2 option examples completed");
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("All NIO.2 option examples completed!");
+        System.out.println("=".repeat(70));
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // LinkOption.NOFOLLOW_LINKS
     // ═══════════════════════════════════════════════════════════════════════════
-    private static void demonstrateLinkOption() {
+    private static void demonstrateLinkOption() throws IOException {
         System.out.println("=== LinkOption ===\n");
 
-        Path path = Path.of(".");
+        Path tempDir = Files.createTempDirectory("linkOption");
+        Path actualFile = tempDir.resolve("actual.txt");
+        Path symLink = tempDir.resolve("link.txt");
 
-        // Example 1: exists() with LinkOption
-        System.out.println("Files.exists(path):");
-        System.out.println("  Following links: " + Files.exists(path));
-        System.out.println("  Not following links: " + Files.exists(path, LinkOption.NOFOLLOW_LINKS));
+        try {
+            // Create actual file
+            Files.writeString(actualFile, "Hello from actual file");
 
-        // Example 2: isDirectory() with LinkOption
-        System.out.println("\nFiles.isDirectory(path):");
-        System.out.println("  Following links: " + Files.isDirectory(path));
-        System.out.println("  Not following links: " + Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS));
+            // Create symbolic link (only works on systems that support it)
+            try {
+                Files.createSymbolicLink(symLink, actualFile);
 
-        // Use case: Detecting symbolic links
-        System.out.println("\nDetecting symbolic links:");
-        System.out.println("If Files.isSymbolicLink(path) returns true, then:");
-        System.out.println("  - exists(path) follows link to target");
-        System.out.println("  - exists(path, NOFOLLOW_LINKS) checks link itself");
+                System.out.println("Created: " + actualFile.getFileName());
+                System.out.println("Created: " + symLink.getFileName() + " -> " + actualFile.getFileName());
 
-        // Common method signatures:
-        System.out.println("\nCommon methods accepting LinkOption:");
-        System.out.println("  Files.exists(Path, LinkOption...)");
-        System.out.println("  Files.isDirectory(Path, LinkOption...)");
-        System.out.println("  Files.isRegularFile(Path, LinkOption...)");
-        System.out.println("  Path.toRealPath(LinkOption...)");
-        System.out.println("  Files.readAttributes(Path, Class<A>, LinkOption...)");
+                // Example 1: exists() with symbolic link
+                System.out.println("\nFiles.exists(symLink):");
+                System.out.println("  Default (follows link): " + Files.exists(symLink));
+                System.out.println("  NOFOLLOW_LINKS: " + Files.exists(symLink, LinkOption.NOFOLLOW_LINKS));
+
+                // Delete actual file to show difference
+                Files.delete(actualFile);
+                System.out.println("\nAfter deleting actual.txt:");
+                System.out.println("  Default (follows link): " + Files.exists(symLink) + " (broken link)");
+                System.out.println("  NOFOLLOW_LINKS: " + Files.exists(symLink, LinkOption.NOFOLLOW_LINKS) + " (link itself exists)");
+
+                // Detecting broken symbolic links - EXAM TIP!
+                boolean isBrokenLink = !Files.exists(symLink) && Files.exists(symLink, LinkOption.NOFOLLOW_LINKS);
+                System.out.println("\n  Is broken link? " + isBrokenLink);
+                System.out.println("  Explanation: Link file exists, but target is gone");
+
+            } catch (UnsupportedOperationException | java.nio.file.FileSystemException e) {
+                System.out.println("Symbolic links require admin privileges on Windows");
+                System.out.println("\nConcept demonstration:");
+                System.out.println("  If 'link.txt' -> 'actual.txt' (symbolic link):");
+                System.out.println("    Files.exists(link) DEFAULT: checks if actual.txt exists");
+                System.out.println("    Files.exists(link, NOFOLLOW_LINKS): checks if link itself exists");
+                System.out.println("\n  Use case: Detecting if a path is a broken link");
+                System.out.println("    !exists(path) && exists(path, NOFOLLOW_LINKS) = broken symlink");
+            }
+        } finally {
+            // Cleanup
+            Files.deleteIfExists(symLink);
+            Files.deleteIfExists(actualFile);
+            Files.deleteIfExists(tempDir);
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // StandardCopyOption
     // ═══════════════════════════════════════════════════════════════════════════
-    private static void demonstrateStandardCopyOption() {
+    private static void demonstrateStandardCopyOption() throws IOException {
         System.out.println("\n=== StandardCopyOption ===\n");
 
-        // All three enum values
-        System.out.println("Enum values:");
-        System.out.println("1. REPLACE_EXISTING   - Replace target if exists");
-        System.out.println("2. COPY_ATTRIBUTES    - Copy file attributes");
-        System.out.println("3. ATOMIC_MOVE        - Atomic move (move only!)");
+        Path tempDir = Files.createTempDirectory("copyOption");
 
-        // Example: Copy with options
-        System.out.println("\nExample usage:");
-        System.out.println("Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);");
-        System.out.println("Files.copy(source, target, StandardCopyOption.COPY_ATTRIBUTES);");
-        System.out.println("Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING,");
-        System.out.println("                           StandardCopyOption.COPY_ATTRIBUTES);");
+        try {
+            Path source = tempDir.resolve("source.txt");
+            Path target = tempDir.resolve("target.txt");
 
-        // Example: Move with atomic
-        System.out.println("\nAtomic move:");
-        System.out.println("Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);");
+            // Example 1: Copy without REPLACE_EXISTING
+            Files.writeString(source, "Original content");
+            Files.copy(source, target);
+            System.out.println("1. Copy without options: SUCCESS");
 
-        // EXAM TRAP
-        System.out.println("\nEXAM TRAP:");
-        System.out.println("  ATOMIC_MOVE only works with Files.move()");
-        System.out.println("  Using it with Files.copy() -> UnsupportedOperationException");
+            // Example 2: Copy again - should throw exception
+            try {
+                Files.copy(source, target);
+                System.out.println("2. Copy when target exists: (should not see this)");
+            } catch (FileAlreadyExistsException e) {
+                System.out.println("2. Copy when target exists: FileAlreadyExistsException thrown!");
+            }
 
-        // Default behavior
-        System.out.println("\nDefault behavior (no options):");
-        System.out.println("  - Throws FileAlreadyExistsException if target exists");
-        System.out.println("  - Does NOT copy attributes");
-        System.out.println("  - Move is NOT atomic");
+            // Example 3: REPLACE_EXISTING
+            Files.writeString(source, "Updated content");
+            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("3. REPLACE_EXISTING: " + Files.readString(target));
 
-        // Combining with LinkOption
-        System.out.println("\nCombining with LinkOption:");
-        System.out.println("Files.copy(source, target,");
-        System.out.println("           StandardCopyOption.REPLACE_EXISTING,");
-        System.out.println("           LinkOption.NOFOLLOW_LINKS);");
-        System.out.println("  (Both implement CopyOption interface)");
+            // Example 4: COPY_ATTRIBUTES
+            Files.delete(target);
+            Thread.sleep(2000); // Wait to show time difference
+            Files.copy(source, target, StandardCopyOption.COPY_ATTRIBUTES);
+            System.out.println("4. COPY_ATTRIBUTES: Last modified times match: " +
+                    (Files.getLastModifiedTime(source).equals(Files.getLastModifiedTime(target))));
+
+            // Example 5: ATOMIC_MOVE
+            Path moveSource = tempDir.resolve("move-source.txt");
+            Path moveTarget = tempDir.resolve("move-target.txt");
+            Files.writeString(moveSource, "Move me");
+            Files.move(moveSource, moveTarget, StandardCopyOption.ATOMIC_MOVE);
+            System.out.println("5. ATOMIC_MOVE: Moved (exists=" + Files.exists(moveTarget) +
+                    ", source deleted=" + !Files.exists(moveSource) + ")");
+
+            // Example 6: EXAM TRAP - ATOMIC_MOVE with copy
+            try {
+                Files.copy(source, tempDir.resolve("test.txt"), StandardCopyOption.ATOMIC_MOVE);
+            } catch (UnsupportedOperationException e) {
+                System.out.println("6. EXAM TRAP: ATOMIC_MOVE with copy() -> UnsupportedOperationException!");
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            // Cleanup
+            try (Stream<Path> paths = Files.walk(tempDir)) {
+                paths.sorted((a, b) -> b.compareTo(a)).forEach(p -> {
+                    try { Files.deleteIfExists(p); } catch (IOException e) {}
+                });
+            }
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // StandardOpenOption
     // ═══════════════════════════════════════════════════════════════════════════
-    private static void demonstrateStandardOpenOption() {
+    private static void demonstrateStandardOpenOption() throws IOException {
         System.out.println("\n=== StandardOpenOption ===\n");
 
-        // All enum values
-        System.out.println("Enum values:");
-        System.out.println(" 1. READ              - Open for read access");
-        System.out.println(" 2. WRITE             - Open for write access");
-        System.out.println(" 3. APPEND            - Append to end (implies WRITE)");
-        System.out.println(" 4. TRUNCATE_EXISTING - Truncate to 0 bytes (implies WRITE)");
-        System.out.println(" 5. CREATE            - Create if doesn't exist");
-        System.out.println(" 6. CREATE_NEW        - Create new, fail if exists");
-        System.out.println(" 7. DELETE_ON_CLOSE   - Delete when closed");
-        System.out.println(" 8. SPARSE            - File will be sparse");
-        System.out.println(" 9. SYNC              - Sync content AND metadata");
-        System.out.println("10. DSYNC             - Sync content only");
+        Path tempDir = Files.createTempDirectory("openOption");
 
-        // Common combinations
-        System.out.println("\nCommon combinations:");
-        System.out.println("\n1. Read existing file:");
-        System.out.println("   Files.newInputStream(path, StandardOpenOption.READ);");
-        System.out.println("   // READ is default for input streams");
+        try {
+            // Example 1: CREATE - creates if doesn't exist, opens if exists
+            Path file1 = tempDir.resolve("test1.txt");
+            Files.writeString(file1, "First", StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            Files.writeString(file1, "Second", StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            System.out.println("1. CREATE + TRUNCATE_EXISTING: " + Files.readString(file1));
 
-        System.out.println("\n2. Overwrite or create file:");
-        System.out.println("   Files.newOutputStream(path,");
-        System.out.println("       StandardOpenOption.WRITE,");
-        System.out.println("       StandardOpenOption.CREATE,");
-        System.out.println("       StandardOpenOption.TRUNCATE_EXISTING);");
-        System.out.println("   // These are defaults for output streams");
+            // Example 2: APPEND
+            Path file2 = tempDir.resolve("test2.txt");
+            Files.writeString(file2, "Line 1\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.writeString(file2, "Line 2\n", StandardOpenOption.APPEND);
+            Files.writeString(file2, "Line 3\n", StandardOpenOption.APPEND);
+            System.out.println("2. APPEND:");
+            System.out.println(Files.readString(file2).trim().replace("\n", ", "));
 
-        System.out.println("\n3. Append to file:");
-        System.out.println("   Files.newOutputStream(path,");
-        System.out.println("       StandardOpenOption.WRITE,");
-        System.out.println("       StandardOpenOption.CREATE,");
-        System.out.println("       StandardOpenOption.APPEND);");
+            // Example 3: CREATE_NEW - fails if exists
+            Path file3 = tempDir.resolve("test3.txt");
+            Files.writeString(file3, "New file", StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+            try {
+                Files.writeString(file3, "Try again", StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+            } catch (FileAlreadyExistsException e) {
+                System.out.println("3. CREATE_NEW on existing file: FileAlreadyExistsException!");
+            }
 
-        System.out.println("\n4. Create new file (fail if exists):");
-        System.out.println("   Files.newOutputStream(path,");
-        System.out.println("       StandardOpenOption.WRITE,");
-        System.out.println("       StandardOpenOption.CREATE_NEW);");
+            // Example 4: DELETE_ON_CLOSE
+            Path file4 = tempDir.resolve("test4.txt");
+            try (var out = Files.newOutputStream(file4, StandardOpenOption.CREATE, StandardOpenOption.DELETE_ON_CLOSE)) {
+                out.write("Temporary data".getBytes());
+                System.out.println("4. DELETE_ON_CLOSE: File exists inside try: " + Files.exists(file4));
+            }
+            System.out.println("   DELETE_ON_CLOSE: File exists after close: " + Files.exists(file4));
 
-        System.out.println("\n5. Temporary file (deleted on close):");
-        System.out.println("   Files.newOutputStream(path,");
-        System.out.println("       StandardOpenOption.CREATE,");
-        System.out.println("       StandardOpenOption.DELETE_ON_CLOSE);");
+            // Example 5: EXAM TRAP - APPEND and TRUNCATE_EXISTING together
+            try {
+                Path file5 = tempDir.resolve("test5.txt");
+                Files.writeString(file5, "Test",
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (IllegalArgumentException e) {
+                System.out.println("5. EXAM TRAP: APPEND + TRUNCATE_EXISTING -> IllegalArgumentException!");
+            }
 
-        // EXAM TRAPS
-        System.out.println("\nEXAM TRAPS:");
-        System.out.println("  1. APPEND and TRUNCATE_EXISTING are mutually exclusive!");
-        System.out.println("  2. CREATE_NEW throws FileAlreadyExistsException if file exists");
-        System.out.println("  3. CREATE does NOT throw exception if file exists");
-        System.out.println("  4. APPEND implies WRITE (don't need to specify both)");
-        System.out.println("  5. TRUNCATE_EXISTING implies WRITE");
+            // Example 6: Default behavior
+            Path file6 = tempDir.resolve("test6.txt");
+            Files.writeString(file6, "Original");
+            Files.writeString(file6, "Default behavior");
+            System.out.println("6. Default (no options): " + Files.readString(file6) + " (overwrites)");
 
-        // Used in methods
-        System.out.println("\nUsed in methods:");
-        System.out.println("  Files.newBufferedReader(Path, OpenOption...)");
-        System.out.println("  Files.newBufferedWriter(Path, OpenOption...)");
-        System.out.println("  Files.newInputStream(Path, OpenOption...)");
-        System.out.println("  Files.newOutputStream(Path, OpenOption...)");
-        System.out.println("  Files.write(Path, byte[], OpenOption...)");
-        System.out.println("  Files.writeString(Path, String, OpenOption...)");
+        } finally {
+            // Cleanup
+            try (Stream<Path> paths = Files.walk(tempDir)) {
+                paths.sorted((a, b) -> b.compareTo(a)).forEach(p -> {
+                    try { Files.deleteIfExists(p); } catch (IOException e) {}
+                });
+            }
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // FileVisitOption
     // ═══════════════════════════════════════════════════════════════════════════
-    private static void demonstrateFileVisitOption() {
+    private static void demonstrateFileVisitOption() throws IOException {
         System.out.println("\n=== FileVisitOption ===\n");
 
-        // Only one value
-        System.out.println("Enum value:");
-        System.out.println("  FOLLOW_LINKS - Follow symbolic links when traversing");
+        Path tempDir = Files.createTempDirectory("visitOption");
 
-        System.out.println("\nDefault behavior:");
-        System.out.println("  Does NOT follow symbolic links (safer, avoids cycles)");
+        try {
+            // Create directory structure
+            Path subDir1 = tempDir.resolve("dir1");
+            Path subDir2 = tempDir.resolve("dir2");
+            Files.createDirectories(subDir1);
+            Files.createDirectories(subDir2);
 
-        // Example usage
-        System.out.println("\nExample usage:");
-        System.out.println("\n1. Walk directory tree WITHOUT following links (default):");
-        System.out.println("   Files.walk(startPath)");
+            Files.createFile(tempDir.resolve("root.txt"));
+            Files.createFile(subDir1.resolve("file1.txt"));
+            Files.createFile(subDir2.resolve("file2.txt"));
 
-        System.out.println("\n2. Walk directory tree FOLLOWING links:");
-        System.out.println("   Files.walk(startPath, FileVisitOption.FOLLOW_LINKS)");
+            // Example 1: Walk WITHOUT following links (default)
+            long countDefault;
+            try (Stream<Path> stream = Files.walk(tempDir)) {
+                countDefault = stream.filter(Files::isRegularFile).count();
+            }
+            System.out.println("1. Files.walk(tempDir) - Default (no symlinks): " + countDefault + " files");
 
-        System.out.println("\n3. Walk with max depth:");
-        System.out.println("   Files.walk(startPath, 3, FileVisitOption.FOLLOW_LINKS)");
+            // Example 2: Create symbolic link and walk WITH FOLLOW_LINKS
+            try {
+                Path link = tempDir.resolve("linkedDir");
+                Files.createSymbolicLink(link, subDir1);
 
-        System.out.println("\n4. Find files:");
-        System.out.println("   Files.find(startPath, Integer.MAX_VALUE,");
-        System.out.println("              (path, attrs) -> path.toString().endsWith(\".txt\"),");
-        System.out.println("              FileVisitOption.FOLLOW_LINKS)");
+                long countWithLinks;
+                try (Stream<Path> stream = Files.walk(tempDir, FileVisitOption.FOLLOW_LINKS)) {
+                    countWithLinks = stream.filter(Files::isRegularFile).count();
+                }
+                System.out.println("2. Files.walk(tempDir, FOLLOW_LINKS): " + countWithLinks + " files (includes linked)");
 
-        // EXAM TRAPS
-        System.out.println("\nEXAM TRAPS:");
-        System.out.println("  1. FOLLOW_LINKS can cause INFINITE LOOPS with circular links!");
-        System.out.println("  2. FileNotFoundException if symbolic link target doesn't exist");
-        System.out.println("  3. Default is NOT to follow links (for safety)");
+                long countWithoutLinks;
+                try (Stream<Path> stream = Files.walk(tempDir)) {
+                    countWithoutLinks = stream.filter(Files::isRegularFile).count();
+                }
+                System.out.println("   Files.walk(tempDir) without option: " + countWithoutLinks + " files (link ignored)");
 
-        // Used in methods
-        System.out.println("\nUsed in methods:");
-        System.out.println("  Files.walk(Path, FileVisitOption...)");
-        System.out.println("  Files.walk(Path, int maxDepth, FileVisitOption...)");
-        System.out.println("  Files.find(Path, int maxDepth, BiPredicate, FileVisitOption...)");
-        System.out.println("  Files.walkFileTree(Path, Set<FileVisitOption>, int, FileVisitor)");
+            } catch (UnsupportedOperationException | java.nio.file.FileSystemException e) {
+                System.out.println("2. Symbolic links require admin on Windows");
+                System.out.println("   FOLLOW_LINKS would traverse into linked directories");
+                System.out.println("   Default ignores symlinks (safer - avoids infinite loops)");
+            }
+
+            // Example 3: Files.find with FileVisitOption
+            System.out.print("3. Files.find .txt files: ");
+            try (Stream<Path> stream = Files.find(tempDir, Integer.MAX_VALUE,
+                    (path, attrs) -> path.toString().endsWith(".txt"))) {
+                System.out.println(stream.count() + " found");
+            }
+
+            // Example 4: Max depth
+            System.out.print("4. Files.walk with maxDepth=1 (root only): ");
+            try (Stream<Path> stream = Files.walk(tempDir, 1)) {
+                System.out.println(stream.filter(Files::isRegularFile).count() + " files");
+            }
+
+        } finally {
+            // Cleanup
+            try (Stream<Path> paths = Files.walk(tempDir)) {
+                paths.sorted((a, b) -> b.compareTo(a)).forEach(p -> {
+                    try { Files.deleteIfExists(p); } catch (IOException e) {}
+                });
+            }
+        }
     }
 }
 

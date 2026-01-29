@@ -1,5 +1,7 @@
 package ch07beyondclasses;
 
+import java.util.ArrayList;
+
 /**
  * ENCAPSULATION AND RECORDS - OCP Java 17 Exam
  *

@@ -578,11 +578,26 @@ import java.nio.file.*;
  *
  *
  * ============================================================================
- * COMPARISON: FILE (I/O) vs FILES (NIO.2)
+ * COMPARISON: FILE (I/O) vs PATH/FILES (NIO.2)
  * ============================================================================
  *
  * ┌─────────────────────┬──────────────────────┬─────────────────────────────┐
- * │ Operation           │ File (I/O)           │ Files (NIO.2)               │
+ * │ Operation           │ File (I/O)           │ Path/Files (NIO.2)          │
+ * ├─────────────────────┼──────────────────────┼─────────────────────────────┤
+ * │ Get name            │ getName()            │ getFileName()               │
+ * │                     │ (returns String)     │ (returns Path)              │
+ * │                     │ (no exception)       │ (no exception)              │
+ * ├─────────────────────┼──────────────────────┼─────────────────────────────┤
+ * │ Get parent          │ getParent()          │ getParent()                 │
+ * │                     │ (returns String)     │ (returns Path)              │
+ * │                     │ (no exception)       │ (no exception)              │
+ * ├─────────────────────┼──────────────────────┼─────────────────────────────┤
+ * │ Check if absolute   │ isAbsolute()         │ isAbsolute()                │
+ * │                     │ (no exception)       │ (no exception)              │
+ * ├─────────────────────┼──────────────────────┼─────────────────────────────┤
+ * │ Get absolute path   │ getAbsolutePath()    │ toAbsolutePath()            │
+ * │                     │ (returns String)     │ (returns Path)              │
+ * │                     │ (no exception)       │ (no exception)              │
  * ├─────────────────────┼──────────────────────┼─────────────────────────────┤
  * │ Check existence     │ exists()             │ exists(Path)                │
  * │                     │ (no exception)       │ (no exception)              │
@@ -619,10 +634,13 @@ import java.nio.file.*;
  * └─────────────────────┴──────────────────────┴─────────────────────────────┘
  *
  * KEY DIFFERENCES:
+ * - File methods return String, Path methods return Path (getName/getFileName, getParent, getAbsolutePath/toAbsolutePath)
  * - File methods return false on error, Files methods throw IOException
  * - Files methods provide better error information
  * - Files methods support LinkOption for symbolic link handling
  * - Files.list() returns Stream (must close), File.listFiles() returns array
+ * - Path methods: getFileName(), getParent(), isAbsolute(), toAbsolutePath()
+ * - Files methods: exists(Path), isDirectory(Path), size(Path), etc.
  *
  *
  * ============================================================================
